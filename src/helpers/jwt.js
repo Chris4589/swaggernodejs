@@ -7,7 +7,7 @@ console.log(`xdd ${process.env.JWTSECRET}`);
 module.exports = (uid) =>{
     return new Promise((resolve, reject)=>{
         const payload = {
-            uid:uid
+            uid
         };
         
         jwt.sign(payload, process.env.JWTSECRET, {

@@ -4,33 +4,39 @@ const { Sequelize } = require('sequelize');
 
 const { Connection } = require('../configs/db');
 
-class ModelUser extends Connection {
+class ModelAdmin extends Connection {
     constructor() {
         super();
-        this.model = this.connection.define('users', {
-            id:{
+
+        this.model = this.connection.define('admins', {
+            id: {
                 primaryKey: true,
                 type: Sequelize.INTEGER,
                 unique: true,
                 autoIncrement: true,
                 required: true
             },
-            user:{
+            authid: {
                 type: Sequelize.STRING,
                 allowNull: false,
                 unique: true,
                 required: true
             },
-            password:{
+            password: {
                 type: Sequelize.STRING,
-                allowNull: false,
+                allowNull: true,
                 unique: false,
                 required: true
             },
-            role:{
+            role: {
                 type: Sequelize.STRING,
                 allowNull: false,
-                defaultValue: 'USER_ROLE',
+                defaultValue: 'ADMIN',
+                unique: false
+            },
+            flags: {
+                type: Sequelize.STRING,
+                allowNull: false,
                 unique: false
             }
         }, {
@@ -38,9 +44,9 @@ class ModelUser extends Connection {
             underscored: true,
             timestamps: true,
             freezeTableName: true,
-            tableName: 'users'
+            tableName: 'admins'
         });
     }
 }
 
-module.exports = { ModelUser };
+module.exports = { ModelAdmin };

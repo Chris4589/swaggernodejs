@@ -1,13 +1,15 @@
 'use strict';
 
 const responses = require('../helpers/response');
-const users = require('../models/users.model');
+const { ModelUser } = require('../models/users.model');
+
+const { model } = new ModelUser();
 
 module.exports = async (req, res, next) => {
     try {
         const { uid } = req;
         
-        const userType = await users.findOne({
+        const userType = await model.findOne({
             where:{ id:uid }
         });
 

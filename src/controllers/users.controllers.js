@@ -3,14 +3,16 @@
 
 const bcrypt = require('bcryptjs');
 
-const users = require('../models/users.model');
+const { ModelUser } = require('../models/users.model');
 const responses = require('../helpers/response');
 const jwt = require('../helpers/jwt');
+
+const { model } = new ModelUser();
 
 module.exports = {
     cback_findUser: async(req, res)=>{
         try {
-            const result = await users.findAll();
+            const result = await model.findAll();
             return responses(res, 200, result, false);
         } catch (error) {
             console.log(error);
@@ -21,7 +23,7 @@ module.exports = {
         try {
             const { user, password, ...data } = req.body;
             
-            const exists = await users.findOne({
+            const exists = await model.findOne({
                 where:{ user }
             });
             
@@ -31,7 +33,7 @@ module.exports = {
             data.user = user;
             data.password = bcrypt.hashSync(password, salt);
             
-            const info = await users.create(data);
+            const info = await model.create(data);
 
             const token = await jwt(info.id);
             return responses(res, 200, {info, token}, false);
@@ -47,10 +49,10 @@ module.exports = {
             const { user, role } = req.body;
 
             const [exists, checkid] = await Promise.all([
-                users.findOne({
+                model.findOne({
                     where:{ user }
                 }),
-                users.findOne({
+                model.findOne({
                     where:{ id }
                 })
             ]);
@@ -58,7 +60,7 @@ module.exports = {
             if(!checkid) return responses(res, 400, `El user no existe`, true);
             if(exists && user !== checkid.user) return responses(res, 400, `Ya existe ese user`, true);
 
-            const result = await users.update({ user, role }, { where:{ id } });
+            const result = await model.update({ user, role }, { where:{ id } });
 
             return responses(res, 200, result, false);
 
@@ -71,13 +73,13 @@ module.exports = {
         try {
             const { id } = req.query;
 
-            const exists = await users.findOne({
+            const exists = await model.findOne({
                 where:{ id }
             });
             
             if(!exists) return responses(res, 400, `No existe`, true);
 
-            const result = await users.destroy({
+            const result = await model.destroy({
                 where:{ id }
             });
 
